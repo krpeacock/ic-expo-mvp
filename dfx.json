@@ -1,0 +1,19 @@
+{
+    "canisters": {
+        "whoami": {
+            "type": "pull",
+            "id": "ivcos-eqaaa-aaaab-qablq-cai",
+            "declarations": {
+                "node_compatibility": true
+            }
+        }
+    },
+    "defaults": {
+        "build": {
+            "args": "",
+            "packtool": ""
+        }
+    },
+    "output_env_file": ".env",
+    "version": 1
+}
