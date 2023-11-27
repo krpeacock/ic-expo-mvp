@@ -1,32 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import "react-native-get-random-values";
 import "react-native-polyfill-globals/auto";
-import "react-native-fetch-api";
-import { TextEncoder } from "text-encoding";
 globalThis.TextEncoder = TextEncoder;
 window.TextEncoder = TextEncoder;
+import React, { useState } from "react";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { TextEncoder } from "text-encoding";
 
-process.env.DFX_NETWORK = "ic";
-import { whoami_actor } from "./src/actor";
+import { backend_actor } from "./src/actor";
+import LoggedOut from "./src/frontend/LoggedOut";
 
 export default function App() {
-  const [me, setMe] = useState("");
-  const [error, setError] = useState(null);
+  const [greeting, setGreeting] = useState("");
+  const [name, setName] = useState("");
 
-  useEffect(() => {
-    whoami_actor
-      .whoami()
-      .then((me) => setMe(me.toText()))
-      .catch((error) => setError(error));
-  }, []);
+  function greet() {
+    console.log("greet");
+    console.log("network: " + process.env.EXPO_PUBLIC_ENVIRONMENT);
+    console.log(name);
+    backend_actor
+      .greet(name)
+      .then((greeting) => {
+        console.log(greeting);
+        setGreeting(greeting);
+      })
+      .catch((err) => {
+        console.clear();
+        console.log(err);
+      });
+  }
 
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Text>Principal: {me}</Text>
-      <Text>Error: {error}</Text>
-      <StatusBar style="auto" />
+    <View style={styles.container} accessible={true}>
+      <LoggedOut />
     </View>
   );
 }

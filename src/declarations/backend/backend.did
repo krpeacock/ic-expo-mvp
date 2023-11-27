@@ -1,0 +1,5 @@
+type Backend = 
+ service {
+   greet: (text) -> (text);
+ };
+service : () -> Backend

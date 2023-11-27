@@ -1,8 +1,8 @@
 {
     "canisters": {
-        "whoami": {
-            "type": "pull",
-            "id": "ivcos-eqaaa-aaaab-qablq-cai",
+        "backend": {
+            "type": "motoko",
+            "main": "src/backend/Backend.mo",
             "declarations": {
                 "node_compatibility": true
             }
