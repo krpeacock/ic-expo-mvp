@@ -4,6 +4,9 @@ import { toHex } from "@dfinity/agent";
 import { View, Text, Pressable } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
+import { useURL } from "expo-linking";
+import { DelegationChain, DelegationIdentity } from "@dfinity/identity";
+import { createActor } from "./whoamiActor";
 
 const remToPx = (rem) => rem * 16;
 
@@ -59,14 +62,41 @@ const buttonTextStyles = {
 
 export default function LoggedOut() {
   const [busy, setBusy] = React.useState(false);
+  const identity = Ed25519KeyIdentity.generate();
+
+  const url = useURL();
+
+  const search = new URLSearchParams(url?.split("?")[1]);
+  const delegation = search.get("delegation");
+
+  if (delegation) {
+    const chain = DelegationChain.fromJSON(
+      JSON.parse(decodeURIComponent(delegation))
+    );
+    const delegationIdentity = DelegationIdentity.fromDelegation(
+      identity,
+      chain
+    );
+    const actor = createActor("ivcos-eqaaa-aaaab-qablq-cai", {
+      agentOptions: { identity: delegationIdentity },
+    });
+    actor.whoami().then((res) => {
+      console.log(res);
+    });
+    console.log(delegationIdentity);
+  }
 
   function login() {
     setBusy(true);
-    const identity = Ed25519KeyIdentity.generate();
     const derKey = identity.getPublicKey().toDer();
     const redirect = AuthSession.makeRedirectUri({});
-    const url = new URL("http://127.0.0.1:5173");
-    url.searchParams.set("redirect_uri", encodeURIComponent(redirect));
+    const url = new URL("https://tdpaj-biaaa-aaaab-qaijq-cai.icp0.io/");
+    // url.searchParams.set("redirect_uri", encodeURIComponent(redirect));
+    url.searchParams.set(
+      "redirect_uri",
+      encodeURIComponent(`com.anonymous.ic-expo://expo-development-client`)
+    );
+
     url.searchParams.set("pubkey", toHex(derKey));
     console.log(url.toString());
     WebBrowser.openBrowserAsync(url.toString()).finally(() => {
@@ -89,6 +119,8 @@ export default function LoggedOut() {
       >
         <Text style={buttonTextStyles}>Log in</Text>
       </Pressable>
+      <Text style={baseTextStyles}>You are not authenticated</Text>
+      <Text style={baseTextStyles}>{url}</Text>
     </View>
   );
 }

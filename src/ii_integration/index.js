@@ -14,40 +14,51 @@ async function main() {
   /**
    * @type {IILoginButton}
    */
-  const button = document.querySelector("ii-login-button");
-  button.addEventListener("ready", () => {
+  const loginButton = document.querySelector("ii-login-button");
+  loginButton.addEventListener("ready", () => {
     console.log("ready");
-    const { redirectUri, identity } = parseParams();
+    console.log("0.0.1");
+    try {
+      const { redirectUri, identity } = parseParams();
 
-    button.configure({
-      createOptions: {
-        identity,
-      },
-      loginOptions: {
-        identityProvider: `http://localhost:4943?canisterId=rdmx6-jaaaa-aaaaa-aaadq-cai`,
-        onSuccess: () => {
-          console.log("onSuccess");
-          const delegationIdentity = button.identity;
-
-          var delegationString = JSON.stringify(
-            delegationIdentity.getDelegation().toJSON()
-          );
-
-          console.log(delegationString);
-
-          const encodedDelegation = encodeURIComponent(delegationString);
-          const url = new URL(redirectUri);
-          url.searchParams.set("delegation", encodedDelegation);
-          console.log(`Redirecting to ${url.toString()}`);
-
-          window.open(url, "_self");
+      loginButton.configure({
+        createOptions: {
+          identity,
         },
-        onError: (error) => {
-          console.log("onError");
-          console.log(error);
+        loginOptions: {
+          onSuccess: () => {
+            console.log("onSuccess");
+            const loginButton = document.querySelector("ii-login-button");
+            const delegationIdentity = loginButton.identity;
+
+            var delegationString = JSON.stringify(
+              delegationIdentity.getDelegation().toJSON()
+            );
+
+            console.log(delegationString);
+
+            const encodedDelegation = encodeURIComponent(delegationString);
+            const url = `${redirectUri}/redirect?delegation=${encodedDelegation}`;
+            console.log(`Redirecting to ${url}`);
+
+            //   render button to press when we're done
+            const button = document.createElement("button");
+            button.innerText = "Continue";
+            button.addEventListener("click", () => {
+              window.open(url, "_self");
+            });
+            document.body.appendChild(button);
+          },
+          onError: (error) => {
+            console.log(error);
+            // display as text
+            renderError(error);
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      renderError(error);
+    }
   });
 }
 
@@ -68,19 +79,31 @@ class IncompleteEd25519KeyIdentity extends SignIdentity {
  */
 function parseParams() {
   const url = new URL(window.location.href);
-  const redirectUri = url.searchParams.get("redirect_uri");
+  const redirectUri = decodeURIComponent(url.searchParams.get("redirect_uri"));
   const pubKey = url.searchParams.get("pubkey");
 
+  if (!redirectUri || !pubKey) {
+    renderError(new Error("Missing redirect_uri or pubkey in query string"));
+    throw new Error("Missing redirect_uri or pubkey in query string");
+  }
   const identity = new IncompleteEd25519KeyIdentity(
     Ed25519PublicKey.fromDer(fromHex(pubKey))
   );
 
-  if (!redirectUri || !identity) {
-    throw new Error("Missing redirect_uri or pubkey in query string");
-  }
   return { redirectUri, identity };
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   main();
 });
+
+function renderError(error) {
+  if (document.querySelector("#error")) {
+    document.querySelector("#error").remove();
+  }
+  const errorText = document.createElement("p");
+  errorText.style.color = "red";
+  errorText.id = "error";
+  errorText.innerText = error.message;
+  document.body.appendChild(errorText);
+}

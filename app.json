@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "asdf",
-    "slug": "asdf",
+    "name": "ii_example_app",
+    "slug": "ii_example_app",
     "version": "1.0.0",
     "sdkVersion": "49.0.0",
     "platforms": [
       "ios",
       "android"
     ],
-    "scheme": "asdf-redirect",
+    "scheme": "ii_example_app",
     "ios": {
-      "bundleIdentifier": "com.anonymous.asdf",
+      "bundleIdentifier": "com.dfinity.ii-expo-example",
       "associatedDomains": [
-        "applinks:expo.dev"
+        "applinks:tdpaj-biaaa-aaaab-qaijq-cai.icp0.io"
       ]
     }
   }
