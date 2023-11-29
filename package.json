@@ -1,20 +1,26 @@
 {
-  "name": "ic-expo",
+  "name": "@pavus/ic-expo",
+  "private": true,
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "build": "",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
-    "@dfinity/agent": "^0.19.3-react-native",
+    "@dfinity/agent": "^0.19.3",
     "@dfinity/bls-verify": "^0.19.3-react-native",
-    "@dfinity/candid": "^0.19.3-react-native",
-    "@dfinity/principal": "^0.19.3-react-native",
+    "@dfinity/candid": "^0.19.3",
+    "@dfinity/identity": "^0.19.3",
+    "@dfinity/principal": "^0.19.3",
     "amcl-js": "^3.1.0",
+    "buffer": "^6.0.3",
     "expo": "^49.0.17",
+    "expo-auth-session": "~5.0.2",
+    "expo-crypto": "~12.4.1",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
@@ -26,6 +32,5 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
-  },
-  "private": true
+  }
 }

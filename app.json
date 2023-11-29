@@ -8,8 +8,12 @@
       "ios",
       "android"
     ],
+    "scheme": "asdf-redirect",
     "ios": {
-      "bundleIdentifier": "com.anonymous.asdf"
+      "bundleIdentifier": "com.anonymous.asdf",
+      "associatedDomains": [
+        "applinks:expo.dev"
+      ]
     }
   }
 }

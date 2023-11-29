@@ -1,5 +1,9 @@
 import React from "react";
+import { Ed25519KeyIdentity } from "@dfinity/identity";
+import { toHex } from "@dfinity/agent";
 import { View, Text, Pressable } from "react-native";
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
 
 const remToPx = (rem) => rem * 16;
 
@@ -58,7 +62,16 @@ export default function LoggedOut() {
 
   function login() {
     setBusy(true);
-    console.log("login");
+    const identity = Ed25519KeyIdentity.generate();
+    const derKey = identity.getPublicKey().toDer();
+    const redirect = AuthSession.makeRedirectUri({});
+    const url = new URL("http://127.0.0.1:5173");
+    url.searchParams.set("redirect_uri", encodeURIComponent(redirect));
+    url.searchParams.set("pubkey", toHex(derKey));
+    console.log(url.toString());
+    WebBrowser.openBrowserAsync(url.toString()).finally(() => {
+      setBusy(false);
+    });
   }
 
   return (

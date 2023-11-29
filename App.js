@@ -7,7 +7,7 @@ import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { TextEncoder } from "text-encoding";
 
 import { backend_actor } from "./src/actor";
-import LoggedOut from "./src/frontend/LoggedOut";
+import LoggedOut from "./src/app/LoggedOut";
 
 export default function App() {
   const [greeting, setGreeting] = useState("");
