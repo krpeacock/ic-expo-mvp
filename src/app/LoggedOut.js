@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Ed25519KeyIdentity } from "@dfinity/identity";
-import { toHex } from "@dfinity/agent";
+import { HttpAgent, Actor, toHex } from "@dfinity/agent";
 import { View, Text, Pressable } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useURL } from "expo-linking";
-import { DelegationChain, DelegationIdentity } from "@dfinity/identity";
-import { createActor } from "./whoamiActor";
+import {
+  DelegationChain,
+  DelegationIdentity,
+  isDelegationValid,
+} from "@dfinity/identity";
+import { blsVerify } from "@dfinity/bls-verify";
 
 const remToPx = (rem) => rem * 16;
 
@@ -62,34 +66,39 @@ const buttonTextStyles = {
 
 export default function LoggedOut() {
   const [busy, setBusy] = React.useState(false);
-  const identity = Ed25519KeyIdentity.generate();
-
+  const [identity, setIdentity] = React.useState(Ed25519KeyIdentity.generate());
+  const [delegationIdentity, setDelegationIdentity] = React.useState();
   const url = useURL();
 
-  const search = new URLSearchParams(url?.split("?")[1]);
-  const delegation = search.get("delegation");
+  useEffect(() => {
+    whoami(identity).then((principal) => {
+      console.log("base identity: ", principal.toText());
+    });
+  }, [identity]);
 
-  if (delegation) {
-    const chain = DelegationChain.fromJSON(
-      JSON.parse(decodeURIComponent(delegation))
-    );
-    const delegationIdentity = DelegationIdentity.fromDelegation(
-      identity,
-      chain
-    );
-    const actor = createActor("ivcos-eqaaa-aaaab-qablq-cai", {
-      agentOptions: { identity: delegationIdentity },
+  const derKey = toHex(identity.getPublicKey().toDer());
+
+  useEffect(() => {
+    const search = new URLSearchParams(url?.split("?")[1]);
+    const delegation = search.get("delegation");
+    if (delegation) {
+      const chain = DelegationChain.fromJSON(
+        JSON.parse(decodeURIComponent(delegation))
+      );
+      const id = DelegationIdentity.fromDelegation(identity, chain);
+      console.log("delegation: ", id);
+      setDelegationIdentity(id);
+    }
+  }, [url]);
+
+  if (delegationIdentity) {
+    whoami(delegationIdentity).then((principal) => {
+      console.log("delegation identity: ", principal.toText());
     });
-    actor.whoami().then((res) => {
-      console.log(res);
-    });
-    console.log(delegationIdentity);
   }
 
   function login() {
     setBusy(true);
-    const derKey = identity.getPublicKey().toDer();
-    const redirect = AuthSession.makeRedirectUri({});
     const url = new URL("https://tdpaj-biaaa-aaaab-qaijq-cai.icp0.io/");
     // url.searchParams.set("redirect_uri", encodeURIComponent(redirect));
     url.searchParams.set(
@@ -97,7 +106,7 @@ export default function LoggedOut() {
       encodeURIComponent(`com.anonymous.ic-expo://expo-development-client`)
     );
 
-    url.searchParams.set("pubkey", toHex(derKey));
+    url.searchParams.set("pubkey", derKey);
     console.log(url.toString());
     WebBrowser.openBrowserAsync(url.toString()).finally(() => {
       setBusy(false);
@@ -123,4 +132,31 @@ export default function LoggedOut() {
       <Text style={baseTextStyles}>{url}</Text>
     </View>
   );
+}
+
+async function whoami(identity) {
+  const agent = new HttpAgent({
+    identity,
+    host: "https://icp-api.io",
+    fetchOptions: {
+      reactNative: {
+        __nativeResponseType: "base64",
+      },
+    },
+    blsVerify,
+    callOptions: {
+      reactNative: {
+        textStreaming: true,
+      },
+    },
+  });
+  const idlFactory = ({ IDL }) => {
+    return IDL.Service({ whoami: IDL.Func([], [IDL.Principal], ["query"]) });
+  };
+  const actor = Actor.createActor(idlFactory, {
+    agent,
+    canisterId: "ivcos-eqaaa-aaaab-qablq-cai",
+  });
+
+  return await actor.whoami();
 }
