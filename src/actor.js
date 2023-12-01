@@ -3,7 +3,8 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { blsVerify } from "@dfinity/bls-verify";
 import { idlFactory } from "./declarations/backend";
 
-const isDevelopment = process.env.EXPO_PUBLIC_ENVIRONMENT === "local";
+// const isDevelopment = process.env.EXPO_PUBLIC_ENVIRONMENT === "local";
+const isDevelopment = false;
 
 const CANISTER_ID = isDevelopment
   ? "bkyz2-fmaaa-aaaaa-qaaaq-cai"

@@ -11,8 +11,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@dfinity/agent": "^0.19.3",
-    "@dfinity/bls-verify": "^0.19.3-react-native",
+    "@dfinity/agent": "file:dfinity-agent-0.19.3.tgz",
+    "@dfinity/bls-verify": "file:dfinity-bls-verify-0.19.3.tgz",
     "@dfinity/candid": "^0.19.3",
     "@dfinity/identity": "^0.19.3",
     "@dfinity/principal": "^0.19.3",

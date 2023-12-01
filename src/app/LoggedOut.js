@@ -2,15 +2,11 @@ import React, { useEffect } from "react";
 import { Ed25519KeyIdentity } from "@dfinity/identity";
 import { HttpAgent, Actor, toHex } from "@dfinity/agent";
 import { View, Text, Pressable } from "react-native";
-import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useURL } from "expo-linking";
-import {
-  DelegationChain,
-  DelegationIdentity,
-  isDelegationValid,
-} from "@dfinity/identity";
+import { DelegationChain, DelegationIdentity } from "@dfinity/identity";
 import { blsVerify } from "@dfinity/bls-verify";
+import { backend_actor } from "../actor";
 
 const remToPx = (rem) => rem * 16;
 
@@ -69,6 +65,12 @@ export default function LoggedOut() {
   const [identity, setIdentity] = React.useState(Ed25519KeyIdentity.generate());
   const [delegationIdentity, setDelegationIdentity] = React.useState();
   const url = useURL();
+
+  useEffect(() => {
+    backend_actor.greet("test").then((greeting) => {
+      console.log(greeting);
+    });
+  }, []);
 
   useEffect(() => {
     whoami(identity).then((principal) => {
@@ -144,6 +146,7 @@ async function whoami(identity) {
       },
     },
     blsVerify,
+    verifyQuerySignatures: false,
     callOptions: {
       reactNative: {
         textStreaming: true,
@@ -151,7 +154,7 @@ async function whoami(identity) {
     },
   });
   const idlFactory = ({ IDL }) => {
-    return IDL.Service({ whoami: IDL.Func([], [IDL.Principal], ["query"]) });
+    return IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
   };
   const actor = Actor.createActor(idlFactory, {
     agent,
