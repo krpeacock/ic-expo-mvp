@@ -2,36 +2,20 @@ import "react-native-get-random-values";
 import "react-native-polyfill-globals/auto";
 globalThis.TextEncoder = TextEncoder;
 window.TextEncoder = TextEncoder;
-import React, { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import { TextEncoder } from "text-encoding";
-
-import { backend_actor } from "./src/actor";
-import LoggedOut from "./src/app/LoggedOut";
+import LoggedOut from "./src/app/components/LoggedOut";
+import LoggedIn from "./src/app/components/LoggedIn";
+import { useAuth } from "./src/app/hooks/useAuth";
 
 export default function App() {
-  const [greeting, setGreeting] = useState("");
-  const [name, setName] = useState("");
-
-  function greet() {
-    console.log("greet");
-    console.log("network: " + process.env.EXPO_PUBLIC_ENVIRONMENT);
-    console.log(name);
-    backend_actor
-      .greet(name)
-      .then((greeting) => {
-        console.log(greeting);
-        setGreeting(greeting);
-      })
-      .catch((err) => {
-        console.clear();
-        console.log(err);
-      });
-  }
+  const { identity } = useAuth();
+  console.log("identity", identity);
 
   return (
     <View style={styles.container} accessible={true}>
-      <LoggedOut />
+      {identity ? <LoggedIn identity={identity} /> : <LoggedOut />}
     </View>
   );
 }

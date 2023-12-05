@@ -11,11 +11,12 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@dfinity/agent": "file:dfinity-agent-0.19.3.tgz",
-    "@dfinity/bls-verify": "file:dfinity-bls-verify-0.19.3.tgz",
-    "@dfinity/candid": "^0.19.3",
-    "@dfinity/identity": "^0.19.3",
-    "@dfinity/principal": "^0.19.3",
+    "@dfinity/agent": "file:dfinity-agent-0.20.2.tgz",
+    "@dfinity/bls-verify": "file:dfinity-bls-verify-0.20.2.tgz",
+    "@noble/curves": "file:noble-curves-1.2.0.tgz",
+    "@dfinity/candid": "^0.20.2",
+    "@dfinity/identity": "^0.20.2",
+    "@dfinity/principal": "^0.20.2",
     "amcl-js": "^3.1.0",
     "buffer": "^6.0.3",
     "expo": "^49.0.17",

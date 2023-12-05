@@ -13,7 +13,10 @@
         },
         "whoami": {
             "type": "pull",
-            "id": "ivcos-eqaaa-aaaab-qablq-cai"
+            "id": "ivcos-eqaaa-aaaab-qablq-cai",
+            "declarations": {
+                "node_compatibility": true
+            }
         },
         "ii_integration": {
             "type": "assets",
@@ -21,12 +24,6 @@
                 "src/ii_integration/assets",
                 "src/ii_integration/dist"
             ]
-        }
-    },
-    "defaults": {
-        "build": {
-            "args": "",
-            "packtool": ""
         }
     },
     "output_env_file": ".env",
