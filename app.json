@@ -13,7 +13,10 @@
       "bundleIdentifier": "com.dfinity.ii-expo-example",
       "associatedDomains": [
         "applinks:tdpaj-biaaa-aaaab-qaijq-cai.icp0.io"
-      ]
+      ],
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     }
   }
 }

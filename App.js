@@ -2,20 +2,33 @@ import "react-native-get-random-values";
 import "react-native-polyfill-globals/auto";
 globalThis.TextEncoder = TextEncoder;
 window.TextEncoder = TextEncoder;
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { TextEncoder } from "text-encoding";
 import LoggedOut from "./src/app/components/LoggedOut";
 import LoggedIn from "./src/app/components/LoggedIn";
 import { useAuth } from "./src/app/hooks/useAuth";
 
-export default function App() {
-  const { identity } = useAuth();
-  console.log("identity", identity);
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { identity, isReady, logout } = useAuth();
+
+  const triggerLogout = () => {
+    setIsLoggedIn(false);
+    logout();
+  };
+
+  useEffect(() => {
+    if (identity) {
+      setIsLoggedIn(true);
+    }
+  }, [identity]);
+
+  if (!isReady) return null;
 
   return (
     <View style={styles.container} accessible={true}>
-      {identity ? <LoggedIn identity={identity} /> : <LoggedOut />}
+      {isLoggedIn ? <LoggedIn logout={triggerLogout} /> : <LoggedOut />}
     </View>
   );
 }
@@ -28,3 +41,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default App;

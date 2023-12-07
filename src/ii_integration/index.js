@@ -16,8 +16,6 @@ async function main() {
    */
   const loginButton = document.querySelector("ii-login-button");
   loginButton.addEventListener("ready", () => {
-    console.log("ready");
-    console.log("0.0.1");
     try {
       const { redirectUri, identity } = parseParams();
 
@@ -27,15 +25,12 @@ async function main() {
         },
         loginOptions: {
           onSuccess: () => {
-            console.log("onSuccess");
             const loginButton = document.querySelector("ii-login-button");
             const delegationIdentity = loginButton.identity;
 
             var delegationString = JSON.stringify(
               delegationIdentity.getDelegation().toJSON()
             );
-
-            console.log(delegationString);
 
             const encodedDelegation = encodeURIComponent(delegationString);
             const url = `${redirectUri}/redirect?delegation=${encodedDelegation}`;

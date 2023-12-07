@@ -1,20 +1,23 @@
 import React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import {
   baseTextStyles,
   containerStyles,
   subheaderStyles,
   headerStyles,
   buttonStyles,
+  disabledButtonStyles,
+  buttonTextStyles,
 } from "./styles";
+import { useAuth } from "../hooks/useAuth";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { blsVerify } from "@dfinity/bls-verify";
 
-function LoggedIn({ identity }) {
-  console.log("identity", identity);
-  // const identity = Ed25519KeyIdentity.generate();
+function LoggedIn({ logout }) {
+  const { identity } = useAuth();
   const [principal, setPrincipal] = React.useState(null);
+  const [busy, setBusy] = React.useState(false);
 
   const whoami = async () => {
     const agent = new HttpAgent({
@@ -42,7 +45,6 @@ function LoggedIn({ identity }) {
     });
 
     const response = await actor.whoami();
-    console.log("response", response);
     return response;
   };
 
@@ -53,20 +55,35 @@ function LoggedIn({ identity }) {
       <Text style={baseTextStyles}>
         To see how a canister views you, click this button!
       </Text>
-      <Button
+      <Pressable
+        style={busy ? disabledButtonStyles : buttonStyles}
+        accessibilityRole="button"
+        disabled={busy}
+        accessibilityState={{ busy }}
         title="whoami"
-        style={buttonStyles}
         onPress={() => {
+          setBusy(true);
           whoami().then((principal) => {
             setPrincipal(Principal.from(principal).toString());
+            setBusy(false);
           });
         }}
-      />
-      {principal && (
-        <View>
-          <Text style={baseTextStyles}>Principal: {principal}</Text>
-        </View>
-      )}
+      >
+        <Text style={buttonTextStyles}>whoami</Text>
+      </Pressable>
+      {principal && <Text style={baseTextStyles}>Principal: {principal}</Text>}
+      <Pressable
+        title="logout"
+        style={busy ? disabledButtonStyles : buttonStyles}
+        accessibilityRole="button"
+        disabled={busy}
+        accessibilityState={{ busy }}
+        onPress={() => {
+          logout();
+        }}
+      >
+        <Text style={buttonTextStyles}>Log out</Text>
+      </Pressable>
     </View>
   );
 }
