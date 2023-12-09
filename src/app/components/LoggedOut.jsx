@@ -41,31 +41,3 @@ export default function LoggedOut() {
     </View>
   );
 }
-
-// async function whoami(identity) {
-//   const agent = new HttpAgent({
-//     identity,
-//     host: "https://icp-api.io",
-//     fetchOptions: {
-//       reactNative: {
-//         __nativeResponseType: "base64",
-//       },
-//     },
-//     blsVerify,
-//     verifyQuerySignatures: false,
-//     callOptions: {
-//       reactNative: {
-//         textStreaming: true,
-//       },
-//     },
-//   });
-//   const idlFactory = ({ IDL }) => {
-//     return IDL.Service({ whoami: IDL.Func([], [IDL.Principal], []) });
-//   };
-//   const actor = Actor.createActor(idlFactory, {
-//     agent,
-//     canisterId: "ivcos-eqaaa-aaaab-qablq-cai",
-//   });
-
-//   return await actor.whoami();
-// }

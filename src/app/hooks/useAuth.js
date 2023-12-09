@@ -69,10 +69,6 @@ export function useAuth() {
       const id = DelegationIdentity.fromDelegation(baseKey, chain);
       setIdentity(id);
 
-      // const baseURL = createURL();
-      // if (canOpenURL(baseURL)) {
-      //   openURL(baseURL);
-      // }
       WebBrowser.dismissBrowser();
     }
   }, [url]);

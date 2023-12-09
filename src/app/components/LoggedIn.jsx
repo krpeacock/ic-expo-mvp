@@ -50,7 +50,7 @@ function LoggedIn({ logout }) {
 
   return (
     <View style={containerStyles}>
-      <Text style={headerStyles}>Internet Identity Client</Text>
+      <Text style={headerStyles}>Hi everyone!</Text>
       <Text style={subheaderStyles}>You are authenticated!</Text>
       <Text style={baseTextStyles}>
         To see how a canister views you, click this button!

@@ -1,12 +1,5 @@
 {
     "canisters": {
-        "backend": {
-            "type": "motoko",
-            "main": "src/backend/Backend.mo",
-            "declarations": {
-                "node_compatibility": true
-            }
-        },
         "internet-identity": {
             "type": "pull",
             "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
